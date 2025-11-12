@@ -647,7 +647,8 @@ async def stream_request_base(
                 on_error(e, f"Bot request to {bot_name} failed on try {i}")
                 # Want to retry on some errors even if we have streamed part of the request
                 # RemoteProtocolError: peer closed connection without sending complete message body
-                allow_retry_after_response = isinstance(e, httpx.RemoteProtocolError)
+                # ConnectError: All connection attempts failed
+                allow_retry_after_response = isinstance(e, httpx.RemoteProtocolError) or isinstance(e, httpx.ConnectError)
                 if (
                     got_response and not allow_retry_after_response
                 ) or i == num_tries - 1:
